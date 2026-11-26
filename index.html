@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Project V6 - GTA 6 Mods</title>
+<meta name="description" content="The first GTA 6 PC launcher with a built-in mod library. Coming soon.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<style>
+  :root {
+    --image: url("https://images.hdqwalls.com/wallpapers/gta-6-sunset-4k-ox.jpg");
+    --blur: 5px;
+    --space: clamp(24px, 6vw, 96px);
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    height: 100%;
+    margin: 0;
+  }
+
+  body {
+    background: #1a0f1f;
+    color: #fff;
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  .background {
+    position: fixed;
+    inset: -24px;
+    background:
+      var(--image) center / cover no-repeat,
+      linear-gradient(180deg, #3b1d4f, #c4476a 60%, #f29b5b);
+    filter: blur(var(--blur));
+    opacity: 0;
+    animation: fade 1.4s ease-out forwards;
+  }
+
+  .overlay {
+    position: fixed;
+    inset: 0;
+    background:
+      linear-gradient(to top, rgba(14, 8, 20, 0.82), rgba(14, 8, 20, 0.35) 45%, rgba(14, 8, 20, 0.05)),
+      linear-gradient(to right, rgba(14, 8, 20, 0.45), rgba(14, 8, 20, 0) 60%);
+  }
+
+  .banner {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 8px 16px;
+    padding: 10px 52px 10px 20px;
+    background: rgba(14, 8, 20, 0.72);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    font-size: 0.9rem;
+    text-align: center;
+    opacity: 0;
+    transform: translateY(-100%);
+    animation: drop 0.7s 0.2s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+  }
+
+  .banner[hidden] { display: none; }
+
+  .banner p {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.92);
+  }
+
+  .discord {
+    padding: 7px 16px;
+    border-radius: 8px;
+    background: #5865f2;
+    color: #fff;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background 0.2s;
+  }
+
+  .discord:hover { background: #4752c4; }
+
+  .close {
+    position: absolute;
+    top: 50%;
+    right: 12px;
+    width: 32px;
+    height: 32px;
+    margin-top: -16px;
+    padding: 0;
+    border: 0;
+    border-radius: 6px;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.75);
+    font-size: 1.4rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: color 0.2s, background 0.2s;
+  }
+
+  .close:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.12);
+  }
+
+  main {
+    position: relative;
+    min-height: 100vh;
+    min-height: 100dvh;
+    max-width: 960px;
+    padding: var(--space) var(--space) calc(var(--space) + 28px);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+
+  .soon {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 28px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+  }
+
+  .soon::before {
+    content: "";
+    width: 24px;
+    height: 1px;
+    background: #fff;
+  }
+
+  h1 {
+    margin: 0;
+    font-size: clamp(3.2rem, 10vw, 8rem);
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.035em;
+    text-shadow: 0 6px 48px rgba(0, 0, 0, 0.4);
+  }
+
+  .subtitle {
+    margin-top: 18px;
+    font-size: clamp(1rem, 2.4vw, 1.6rem);
+    font-weight: 500;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.82);
+  }
+
+  .tagline {
+    max-width: 30ch;
+    margin: 36px 0 0;
+    font-size: clamp(1.05rem, 2vw, 1.3rem);
+    line-height: 1.55;
+    color: rgba(255, 255, 255, 0.85);
+  }
+
+  .tagline strong {
+    color: #fff;
+    font-weight: 600;
+  }
+
+  footer {
+    position: fixed;
+    left: var(--space);
+    right: var(--space);
+    bottom: 22px;
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.55);
+  }
+
+  .soon, h1, .subtitle, .tagline, footer {
+    opacity: 0;
+    transform: translateY(12px);
+    animation: rise 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+  }
+
+  .soon     { animation-delay: 0.3s; }
+  h1        { animation-delay: 0.45s; }
+  .subtitle { animation-delay: 0.6s; }
+  .tagline  { animation-delay: 0.75s; }
+  footer    { animation-delay: 1s; }
+
+  @keyframes fade { to { opacity: 1; } }
+  @keyframes drop { to { opacity: 1; transform: none; } }
+  @keyframes rise { to { opacity: 1; transform: none; } }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation-duration: 0.01s !important; animation-delay: 0s !important; }
+  }
+</style>
+</head>
+<body>
+  <div class="background"></div>
+  <div class="overlay"></div>
+
+  <div class="banner" id="banner">
+    <p>This is a temp domain. The official website is coming soon, join our Discord for updates.</p>
+    <a class="discord" href="https://discord.gg/MFHnwMW5TN" target="_blank" rel="noopener noreferrer">Join Discord</a>
+    <button class="close" type="button" aria-label="Close banner" onclick="document.getElementById('banner').hidden = true">&times;</button>
+  </div>
+
+  <main>
+    <div class="soon">Coming soon</div>
+    <h1>Project V6</h1>
+    <div class="subtitle">GTA 6 Mods</div>
+    <p class="tagline">The first <strong>GTA 6 PC launcher</strong> with a built-in mod library.</p>
+  </main>
+
+  <footer>Unofficial fan project. Not affiliated with Rockstar Games or Take-Two Interactive.</footer>
+</body>
+</html>
